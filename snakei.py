@@ -31,6 +31,16 @@ class SnakeGame:
             random.randrange(1, self.height // 10) * 10,
         )
 
+    def game_over(self):
+        font = pygame.font.SysFont(None, 36)
+        text = font.render(f"Game Over! Score: {self.score}", True, RED)
+        text_rect = text.get_rect(center=(self.width // 2, self.height // 2))
+        self.screen.blit(text, text_rect)
+        pygame.display.flip()
+        pygame.time.wait(2000)
+        pygame.quit()
+        quit()
+
     def run(self):
         while True:
             for event in pygame.event.get():
@@ -69,6 +79,17 @@ class SnakeGame:
             new_head = (head[0] - 10, head[1])
         elif self.direction == "RIGHT":
             new_head = (head[0] + 10, head[1])
+
+        if (
+            new_head[0] < 0
+            or new_head[0] >= self.width
+            or new_head[1] < 0
+            or new_head[1] >= self.height
+        ):
+            self.game_over()
+
+        if new_head in self.snake:
+            self.game_over()
 
         self.snake.insert(0, new_head)
 
