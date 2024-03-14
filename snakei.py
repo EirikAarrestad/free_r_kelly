@@ -8,7 +8,7 @@ RED = (255, 0, 0)
 
 
 class SnakeGame:
-    def __init__(self, width=720, height=480):
+    def __init__(self, width, height):
         pygame.init()
 
         self.width = width
@@ -18,9 +18,15 @@ class SnakeGame:
 
         self.clock = pygame.time.Clock()
 
-        self.snake = [(100, 50), (90, 50), (80, 50)]
+        # Adjusting initial snake position based on the game area size
+        self.snake = [
+            (width // 2, height // 2),
+            (width // 2 - 10, height // 2),
+            (width // 2 - 20, height // 2),
+        ]
         self.direction = "RIGHT"
 
+        # Adjusting initial food position based on the game area size
         self.food = self.create_food()
 
         self.score = 0
@@ -41,7 +47,7 @@ class SnakeGame:
         pygame.quit()
         quit()
 
-    def run(self):
+    def run(self, speed):
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -67,7 +73,7 @@ class SnakeGame:
             pygame.draw.rect(self.screen, RED, (self.food[0], self.food[1], 10, 10))
 
             pygame.display.update()
-            self.clock.tick(15)
+            self.clock.tick(speed)
 
     def move_snake(self):
         head = self.snake[0]
@@ -100,6 +106,35 @@ class SnakeGame:
             self.snake.pop()
 
 
+def main():
+    # UI for selecting game mode
+    print("Select game mode:")
+    print("1. Easy")
+    print("2. Medium")
+    print("3. Hard")
+    mode = input("Enter mode (1/2/3): ")
+
+    if mode == "1":
+        speed = 10
+        width = 360
+        height = 240
+    elif mode == "2":
+        speed = 10
+        width = 720
+        height = 480
+    elif mode == "3":
+        speed = 15
+        width = 1080
+        height = 720
+    else:
+        print("Invalid mode selected. Defaulting to medium.")
+        speed = 10
+        width = 720
+        height = 480
+
+    game = SnakeGame(width, height)
+    game.run(speed)
+
+
 if __name__ == "__main__":
-    game = SnakeGame()
-    game.run()
+    main()
