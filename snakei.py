@@ -8,11 +8,12 @@ RED = (255, 0, 0)
 
 
 class SnakeGame:
-    def __init__(self, width, height):
+    def __init__(self, width, height, pixel_size):
         pygame.init()
 
         self.width = width
         self.height = height
+        self.pixel_size = pixel_size  # Size of each pixel
         self.screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption("Snake Game")
 
@@ -21,20 +22,19 @@ class SnakeGame:
         # Adjusting initial snake position based on the game area size
         self.snake = [
             (width // 2, height // 2),
-            (width // 2 - 10, height // 2),
-            (width // 2 - 20, height // 2),
+            (width // 2 - pixel_size, height // 2),
+            (width // 2 - 2 * pixel_size, height // 2),
         ]
         self.direction = "RIGHT"
 
-        # Adjusting initial food position based on the game area size
         self.food = self.create_food()
 
         self.score = 0
 
     def create_food(self):
         return (
-            random.randrange(1, self.width // 10) * 10,
-            random.randrange(1, self.height // 10) * 10,
+            random.randrange(1, self.width // self.pixel_size) * self.pixel_size,
+            random.randrange(1, self.height // self.pixel_size) * self.pixel_size,
         )
 
     def game_over(self):
@@ -68,9 +68,17 @@ class SnakeGame:
             self.screen.fill((0, 0, 0))
 
             for pos in self.snake:
-                pygame.draw.rect(self.screen, GREEN, (pos[0], pos[1], 10, 10))
+                pygame.draw.rect(
+                    self.screen,
+                    GREEN,
+                    (pos[0], pos[1], self.pixel_size, self.pixel_size),
+                )
 
-            pygame.draw.rect(self.screen, RED, (self.food[0], self.food[1], 10, 10))
+            pygame.draw.rect(
+                self.screen,
+                RED,
+                (self.food[0], self.food[1], self.pixel_size, self.pixel_size),
+            )
 
             pygame.display.update()
             self.clock.tick(speed)
@@ -78,13 +86,13 @@ class SnakeGame:
     def move_snake(self):
         head = self.snake[0]
         if self.direction == "UP":
-            new_head = (head[0], head[1] - 10)
+            new_head = (head[0], head[1] - self.pixel_size)
         elif self.direction == "DOWN":
-            new_head = (head[0], head[1] + 10)
+            new_head = (head[0], head[1] + self.pixel_size)
         elif self.direction == "LEFT":
-            new_head = (head[0] - 10, head[1])
+            new_head = (head[0] - self.pixel_size, head[1])
         elif self.direction == "RIGHT":
-            new_head = (head[0] + 10, head[1])
+            new_head = (head[0] + self.pixel_size, head[1])
 
         if (
             new_head[0] < 0
@@ -132,7 +140,9 @@ def main():
         width = 720
         height = 480
 
-    game = SnakeGame(width, height)
+    # Set the pixel size here, for example, 20 for double size
+    pixel_size = 20
+    game = SnakeGame(width, height, pixel_size)
     game.run(speed)
 
 
