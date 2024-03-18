@@ -1,7 +1,7 @@
 import pygame
 import random
 
-# Colors
+# Defingerer farger som skal bli brukt i spillet
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
@@ -13,30 +13,38 @@ class SnakeGame:
 
         self.width = width
         self.height = height
-        self.pixel_size = pixel_size  # Size of each pixel
+        self.pixel_size = pixel_size
         self.screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption("Snake Game")
 
         self.clock = pygame.time.Clock()
 
-        # Adjusting initial snake position based on the game area size
+        # Justering av hvor slangen spawner etter hvor stort vinduet er
         self.snake = [
             (width // 2, height // 2),
             (width // 2 - pixel_size, height // 2),
             (width // 2 - 2 * pixel_size, height // 2),
         ]
+
+        # Velger startsretning til høyre
         self.direction = "RIGHT"
 
         self.food = self.create_food()
 
         self.score = 0
 
+    # Funksjon som lager mat og setter den inn i spillet
     def create_food(self):
-        return (
-            random.randrange(1, self.width // self.pixel_size) * self.pixel_size,
-            random.randrange(1, self.height // self.pixel_size) * self.pixel_size,
-        )
+        while True:
+            food_pos = (
+                random.randrange(1, self.width // self.pixel_size) * self.pixel_size,
+                random.randrange(1, self.height // self.pixel_size) * self.pixel_size,
+            )
+            # Sjekker om maten vil være innenfor slangens kropp
+            if food_pos not in self.snake:
+                return food_pos
 
+    # Game over skjerm som viser score osv.
     def game_over(self):
         font = pygame.font.SysFont(None, 36)
         text = font.render(f"Game Over! Score: {self.score}", True, RED)
@@ -48,6 +56,7 @@ class SnakeGame:
         quit()
 
     def run(self, speed):
+        # Løkke for at slangen skal kunne bevege seg og ikke la den gå to omvendte retninger samtidig
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -67,6 +76,7 @@ class SnakeGame:
 
             self.screen.fill((0, 0, 0))
 
+            # Laster inn slangens kropp i spillet
             for pos in self.snake:
                 pygame.draw.rect(
                     self.screen,
@@ -74,6 +84,7 @@ class SnakeGame:
                     (pos[0], pos[1], self.pixel_size, self.pixel_size),
                 )
 
+            # Tegner "maten" i spillet
             pygame.draw.rect(
                 self.screen,
                 RED,
@@ -83,6 +94,7 @@ class SnakeGame:
             pygame.display.update()
             self.clock.tick(speed)
 
+    # Funksjon for bevegelse av slangen, hvor ny blokk skal legges til og ulike døds-scenarier
     def move_snake(self):
         head = self.snake[0]
         if self.direction == "UP":
@@ -94,6 +106,7 @@ class SnakeGame:
         elif self.direction == "RIGHT":
             new_head = (head[0] + self.pixel_size, head[1])
 
+        # slange død scenarier
         if (
             new_head[0] < 0
             or new_head[0] >= self.width
@@ -115,7 +128,7 @@ class SnakeGame:
 
 
 def main():
-    # UI for selecting game mode
+    # GUI slik at brukereren kan velge vanskelighetsgrad
     print("Select game mode:")
     print("1. Easy")
     print("2. Medium")
@@ -123,25 +136,28 @@ def main():
     mode = input("Enter mode (1/2/3): ")
 
     if mode == "1":
-        speed = 10
+        speed = 5
         width = 360
         height = 240
+        pixel_size = 20
     elif mode == "2":
+        speed = 5
+        width = 540
+        height = 360
+        pixel_size = 20
+
+    elif mode == "3":
         speed = 10
         width = 720
-        height = 480
-    elif mode == "3":
-        speed = 15
-        width = 1080
-        height = 720
+        height = 540
+        pixel_size = 30
+
     else:
         print("Invalid mode selected. Defaulting to medium.")
         speed = 10
         width = 720
         height = 480
 
-    # Set the pixel size here, for example, 20 for double size
-    pixel_size = 20
     game = SnakeGame(width, height, pixel_size)
     game.run(speed)
 
