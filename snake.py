@@ -15,7 +15,7 @@ class SnakeGame:
         self.height = height
         self.pixel_size = pixel_size
         self.screen = pygame.display.set_mode((width, height))
-        pygame.display.set_caption("Snake Game")
+        pygame.display.set_caption("Snake spill")
 
         self.clock = pygame.time.Clock()
 
@@ -141,10 +141,10 @@ def main():
         height = 240
         pixel_size = 20
     elif mode == "2":
-        speed = 5
+        speed = 7.5
         width = 540
         height = 360
-        pixel_size = 20
+        pixel_size = 30
 
     elif mode == "3":
         speed = 10
@@ -154,9 +154,10 @@ def main():
 
     else:
         print("Invalid mode selected. Defaulting to medium.")
-        speed = 10
-        width = 720
-        height = 480
+        speed = 7.5
+        width = 540
+        height = 360
+        pixel_size = 30
 
     game = SnakeGame(width, height, pixel_size)
     game.run(speed)
